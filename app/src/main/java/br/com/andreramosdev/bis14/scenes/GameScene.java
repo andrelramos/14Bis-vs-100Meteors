@@ -1,0 +1,69 @@
+package br.com.andreramosdev.bis14.scenes;
+
+import org.cocos2d.layers.CCLayer;
+import org.cocos2d.layers.CCScene;
+import org.cocos2d.types.CGPoint;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import br.com.andreramosdev.bis14.config.Assets;
+import br.com.andreramosdev.bis14.engines.MeteorsEngine;
+import br.com.andreramosdev.bis14.interfaces.MeteorsEngineDelegate;
+import br.com.andreramosdev.bis14.objects.Meteor;
+import br.com.andreramosdev.bis14.screens.ScreenBackground;
+
+import static br.com.andreramosdev.bis14.config.DeviceSettings.screenHeigth;
+import static br.com.andreramosdev.bis14.config.DeviceSettings.screenResolution;
+import static br.com.andreramosdev.bis14.config.DeviceSettings.screenWidth;
+
+/**
+ * Created by andre on 11/08/15.
+ */
+public class GameScene extends CCLayer implements MeteorsEngineDelegate {
+    private ScreenBackground background;
+    private MeteorsEngine meteorsEngine;
+    private CCLayer meteorsLayer;
+    private List meteorsArray;
+
+    public GameScene() {
+        this.background = new ScreenBackground(Assets.BACKGROUND);
+        this.background.setPosition(screenResolution(CGPoint.ccp(screenWidth() / 2.0f, screenHeigth() / 2.0f)));
+        this.addChild(this.background);
+
+        this.meteorsLayer = CCLayer.node();
+        this.addChild(this.meteorsLayer);
+
+        this.addGameObjects();
+    }
+
+    public static CCScene createGame() {
+        CCScene scene = CCScene.node();
+        GameScene layer = new GameScene();
+        scene.addChild(layer);
+        return scene;
+    }
+
+    private void addGameObjects() {
+        this.meteorsArray = new ArrayList();
+        this.meteorsEngine = new MeteorsEngine();
+    }
+
+    @Override
+    public void createMeteor(Meteor meteor) {
+        this.meteorsLayer.addChild(meteor);
+        meteor.start();
+        this.meteorsArray.add(meteor);
+    }
+
+    @Override
+    public void onEnter() {
+        super.onEnter();
+        this.startEngines();
+    }
+
+    private void startEngines() {
+        this.addChild(this.meteorsEngine);
+        this.meteorsEngine.setDelegate(this);
+    }
+}
