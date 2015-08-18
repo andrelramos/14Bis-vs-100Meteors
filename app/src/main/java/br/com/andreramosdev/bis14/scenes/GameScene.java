@@ -2,7 +2,9 @@ package br.com.andreramosdev.bis14.scenes;
 
 import org.cocos2d.layers.CCLayer;
 import org.cocos2d.layers.CCScene;
+import org.cocos2d.nodes.CCSprite;
 import org.cocos2d.types.CGPoint;
+import org.cocos2d.types.CGRect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +35,7 @@ public class GameScene extends CCLayer implements MeteorsEngineDelegate, ShootEn
     private Player player;
     private CCLayer shootsLayer;
     private ArrayList shootsList;
+    private List playerArray;
 
     public GameScene() {
         this.background = new ScreenBackground(Assets.BACKGROUND);
@@ -73,6 +76,8 @@ public class GameScene extends CCLayer implements MeteorsEngineDelegate, ShootEn
         this.playerLayer.addChild(player);
         this.shootsList = new ArrayList();
         this.player.setDelegate(this);
+        this.playerArray = new ArrayList();
+        this.playerArray.add(this.player);
     }
 
     @Override
@@ -85,6 +90,7 @@ public class GameScene extends CCLayer implements MeteorsEngineDelegate, ShootEn
     @Override
     public void onEnter() {
         super.onEnter();
+        this.schedule("checkHits");
         this.startEngines();
     }
 
@@ -113,4 +119,40 @@ public class GameScene extends CCLayer implements MeteorsEngineDelegate, ShootEn
     public void moveRight() {
         player.moveRight();
     }
+
+    public CGRect getBoarders(CCSprite object) {
+        CGRect rect = object.getBoundingBox();
+        CGPoint GLpoint = rect.origin;
+        CGRect GLrect = CGRect.make(GLpoint.x, GLpoint.y, rect.size.width, rect.size.height);
+        return GLrect;
+    }
+
+    private boolean checkRadiusHitsOfArray(List<? extends CCSprite> array1, List<? extends CCSprite> array2, GameScene gameScene, String hit) {
+        boolean result = false;
+
+        for(int i = 0; i < array1.size(); i++) {
+            //Pega objeto do primeiro array
+            CGRect rect1 = getBoarders(array1.get(i));
+
+            for(int j = 0; j < array2.size(); j++) {
+                //Pega objeto do segundo array
+                CGRect rect2 = getBoarders(array2.get(j));
+
+                //Verifica colisão
+                if(CGRect.intersects(rect1, rect2)) {
+                    System.out.println("Colisão detectada: " + hit);
+                    result = true;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public void checkHits(float dt) {
+        this.checkRadiusHitsOfArray(this.meteorsArray, this.shootsList, this, "meteoroHit");
+
+        this.checkRadiusHitsOfArray(this.meteorsArray, this.playerArray, this, "playerHit");
+    }
+
 }
