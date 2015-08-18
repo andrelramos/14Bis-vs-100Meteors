@@ -6,7 +6,9 @@ import org.cocos2d.types.CGPoint;
 import br.com.andreramosdev.bis14.interfaces.ButtonDelegate;
 import br.com.andreramosdev.bis14.scenes.GameScene;
 
-import static br.com.andreramosdev.bis14.config.Assets.*;
+import static br.com.andreramosdev.bis14.config.Assets.LEFTCONTROL;
+import static br.com.andreramosdev.bis14.config.Assets.RIGHTBUTTON;
+import static br.com.andreramosdev.bis14.config.Assets.SHOOTBUTTON;
 import static br.com.andreramosdev.bis14.config.DeviceSettings.screenResolution;
 import static br.com.andreramosdev.bis14.config.DeviceSettings.screenWidth;
 
@@ -56,6 +58,9 @@ public class GameButtons extends CCLayer implements ButtonDelegate {
         }
         if(sender.equals(this.shootButton)) {
             System.out.println("SHOOT");
+        }
+        if(sender.equals(this.shootButton)) {
+            this.delegate.shoot();
         }
     }
 

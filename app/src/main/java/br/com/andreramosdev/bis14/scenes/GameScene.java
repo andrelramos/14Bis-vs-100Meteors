@@ -11,8 +11,10 @@ import br.com.andreramosdev.bis14.config.Assets;
 import br.com.andreramosdev.bis14.control.GameButtons;
 import br.com.andreramosdev.bis14.engines.MeteorsEngine;
 import br.com.andreramosdev.bis14.interfaces.MeteorsEngineDelegate;
+import br.com.andreramosdev.bis14.interfaces.ShootEngineDelegate;
 import br.com.andreramosdev.bis14.objects.Meteor;
 import br.com.andreramosdev.bis14.objects.Player;
+import br.com.andreramosdev.bis14.objects.Shoot;
 import br.com.andreramosdev.bis14.screens.ScreenBackground;
 
 import static br.com.andreramosdev.bis14.config.DeviceSettings.screenHeigth;
@@ -22,13 +24,15 @@ import static br.com.andreramosdev.bis14.config.DeviceSettings.screenWidth;
 /**
  * Created by andre on 11/08/15.
  */
-public class GameScene extends CCLayer implements MeteorsEngineDelegate {
+public class GameScene extends CCLayer implements MeteorsEngineDelegate, ShootEngineDelegate {
     private ScreenBackground background;
     private MeteorsEngine meteorsEngine;
     private CCLayer meteorsLayer;
     private List meteorsArray;
     private CCLayer playerLayer;
     private Player player;
+    private CCLayer shootsLayer;
+    private ArrayList shootsList;
 
     public GameScene() {
         this.background = new ScreenBackground(Assets.BACKGROUND);
@@ -41,12 +45,18 @@ public class GameScene extends CCLayer implements MeteorsEngineDelegate {
         this.playerLayer = CCLayer.node();
         this.addChild(this.playerLayer);
 
+        this.shootsLayer = CCLayer.node();
+        this.addChild(this.shootsLayer);
+
+        this.setIsTouchEnabled(true);
+
         this.addGameObjects();
 
         GameButtons gameButtonsLayer = new GameButtons().gameButtons();
         this.addChild(gameButtonsLayer);
 
         gameButtonsLayer.setDelegate(this);
+
     }
 
     public static CCScene createGame() {
@@ -61,6 +71,8 @@ public class GameScene extends CCLayer implements MeteorsEngineDelegate {
         this.meteorsEngine = new MeteorsEngine();
         this.player = new Player();
         this.playerLayer.addChild(player);
+        this.shootsList = new ArrayList();
+        this.player.setDelegate(this);
     }
 
     @Override
@@ -81,5 +93,16 @@ public class GameScene extends CCLayer implements MeteorsEngineDelegate {
         this.meteorsEngine.setDelegate(this);
     }
 
+    @Override
+    public void createShoot(Shoot shoot) {
+        this.shootsLayer.addChild(shoot);
+        shoot.setDelegate(this);
+        shoot.start();
+        this.shootsList.add(shoot);
+    }
 
+    public boolean shoot() {
+        player.shoot();
+        return true;
+    }
 }
