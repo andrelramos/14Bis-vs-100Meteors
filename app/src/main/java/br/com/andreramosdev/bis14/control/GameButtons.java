@@ -51,13 +51,10 @@ public class GameButtons extends CCLayer implements ButtonDelegate {
     @Override
     public void buttonClicked(Button sender) {
         if(sender.equals(this.leftControl)) {
-            System.out.println("LEFT");
+            this.delegate.moveLeft();
         }
         if(sender.equals(this.rightControl)) {
-            System.out.println("RIGHT");
-        }
-        if(sender.equals(this.shootButton)) {
-            System.out.println("SHOOT");
+            this.delegate.moveRight();
         }
         if(sender.equals(this.shootButton)) {
             this.delegate.shoot();
